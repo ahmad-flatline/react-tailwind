@@ -16,7 +16,7 @@ function TodoList() {
   };
 
   return (
-    <div>
+    <div className="max-w-[600px] m-auto px-6 py-8 rounded-lg ring-1 ring-slate-900/5 shadow-xl dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-sm">
       <form onSubmit={handleSubmit}>
         <input type="text" name="content" />
         <button>Add</button>
@@ -31,5 +31,5 @@ function TodoList() {
     </div>
   );
 }
-
+TodoList.auth = { path: "/todo-list", role: "ROOT" };
 export default TodoList;
