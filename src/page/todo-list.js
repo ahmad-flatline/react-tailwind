@@ -25,17 +25,16 @@ function TodoList() {
             name="content"
             className="input flex-auto border border-indigo-600 rounded-l-md"
           />
-          <button type="button" className="bg-indigo-500 text-white py-1 px-2 rounded-r-md">
-            Add
-          </button>
+          <button className="bg-indigo-500 text-white py-1 px-2 rounded-r-md">Add</button>
         </div>
       </form>
       <TransitionContainer
         tag="ul"
-        base="mt-3 p-2 bg-slate-900 text-white rounded-md transition duration-500 ease-out"
-        enter=""
+        className=""
+        base="mt-3 p-2 bg-slate-900 text-white rounded-md transition duration-500 ease-in-out"
+        enter="translate-y-12 rotate-12 opacity-0"
         update=""
-        exit="translate-y-12 rotate-12"
+        exit="translate-y-12 rotate-12 opacity-0"
         time={500}
       >
         {items.map((item, i) => (

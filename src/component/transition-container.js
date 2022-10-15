@@ -2,9 +2,9 @@
 import { renderToString } from "react-dom/server";
 import React, { useEffect, useState } from "react";
 
-const TransitionContainer = ({ children, base, enter, update, exit, time, ...props }) => {
+const TransitionContainer = ({ children, className, base, enter, update, exit, time, ...props }) => {
   const [elements, setElements] = useState(null);
-  const [cssClass, setCssClass] = useState("");
+  const [currentClass, setCurrentClass] = useState("");
   const [index, setIndex] = useState(-1);
 
   const prepareChildren = (children) => {
@@ -12,6 +12,7 @@ const TransitionContainer = ({ children, base, enter, update, exit, time, ...pro
 
     if (typeof children === "function") newChildren = [children()];
     else if (!Array.isArray(children)) newChildren = [children];
+
     return newChildren.filter((child) => child);
   };
 
@@ -30,29 +31,47 @@ const TransitionContainer = ({ children, base, enter, update, exit, time, ...pro
 
     if (!elements) setElements(newChildren);
     else {
-      setIndex(elements.findIndex((child) => !newChildren.find((c) => compareComponents(child, c))));
-      if (elements.length !== newChildren.length) setCssClass(exit);
-      // else if (elements.length < newChildren.length) setCssClass(enter);
-      else setCssClass(update);
-
-      setTimeout(() => {
-        setIndex(-1);
-
+      if (elements.length < newChildren.length) {
+        setCurrentClass(enter);
+        setIndex(elements.length);
         setElements(newChildren);
-      }, time);
+        setTimeout(() => setIndex(-1) + setCurrentClass(""), 50);
+      } else {
+        if (elements.length > newChildren.length) setCurrentClass(exit);
+        else setCurrentClass(update);
+
+        setIndex(elements.findIndex((child) => !newChildren.find((c) => compareComponents(child, c))));
+
+        // setTimeout(() => setCurrentClass(""), time - 50);
+
+        setTimeout(() => {
+          setCurrentClass("");
+          setIndex(-1);
+          console.log("Done");
+          setElements(newChildren);
+        }, time);
+      }
     }
   }, [children]);
 
   return (
-    <props.tag>
+    <props.tag className={className}>
       {React.Children.map(elements, (ch, i) =>
         React.cloneElement(ch, {
-          className: `${ch.props.className || ""} ${base} ${i === index ? cssClass : ""}`,
+          className: `${ch.props.className || ""} ${base} ${i === index ? currentClass : ""}`,
         })
       )}
     </props.tag>
   );
 };
 
-TransitionContainer.defaultProps = { tag: "div", base: "", enter: "", update: "", exit: "", time: 100 };
+TransitionContainer.defaultProps = {
+  tag: "div",
+  className: "",
+  base: "",
+  enter: "",
+  update: "",
+  exit: "",
+  time: 100,
+};
 export default TransitionContainer;
