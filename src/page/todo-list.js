@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Loader from "../component/layout/loader";
 import TransitionContainer from "../component/transition-container";
 
 function TodoList() {
@@ -17,13 +18,28 @@ function TodoList() {
 
   return (
     <div className="max-w-[600px] m-auto px-6 py-8 rounded-lg ring-1 ring-slate-900/5 shadow-xl dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-sm">
-      <form onSubmit={handleSubmit}>
-        <input type="text" name="content" />
-        <button>Add</button>
+      <form onSubmit={handleSubmit} className="">
+        <div className="flex ">
+          <input
+            type="text"
+            name="content"
+            className="input flex-auto border border-indigo-600 rounded-l-md"
+          />
+          <button type="button" className="bg-indigo-500 text-white py-1 px-2 rounded-r-md">
+            Add
+          </button>
+        </div>
       </form>
-      <TransitionContainer tag="ul" base="" enter="" update="" exit="" time={500}>
+      <TransitionContainer
+        tag="ul"
+        base="mt-3 p-2 bg-slate-900 text-white rounded-md transition duration-500 ease-out"
+        enter=""
+        update=""
+        exit="translate-y-12 rotate-12"
+        time={500}
+      >
         {items.map((item, i) => (
-          <li key={i} onClick={() => removeItem(item.id)}>
+          <li key={i} onClick={() => removeItem(item.id)} className="">
             {item.content}
           </li>
         ))}

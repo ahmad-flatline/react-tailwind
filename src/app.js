@@ -20,12 +20,9 @@ function App() {
     serLoading(false);
   };
 
-  // localStorage.setItem("themeMode", "dark");
-  // localStorage.setItem("themeMode", "light")
-  // localStorage.removeItem("themeMode") // auto
-
   useEffect(() => {
     fetchUser();
+    setTimeout(() => window.changeThemeMode(), 2000);
   }, []);
 
   if (loading) return <Loader fontSize="100px" full />;

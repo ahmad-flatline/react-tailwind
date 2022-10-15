@@ -22,7 +22,17 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <script>
-      // "light" or "dark"
+      function changeThemeMode(mode) {
+        if (!mode || !(mode === "dark" || mode === "light")) {
+          // auto
+          localStorage.removeItem("themeMode");
+          document.documentElement.className = "";
+        } else {
+          localStorage.setItem("themeMode", mode);
+          document.documentElement.className = mode;
+        }
+      }
+
       if (
         localStorage.themeMode === "dark" ||
         (!("themeMode" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches)

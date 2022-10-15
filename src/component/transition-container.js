@@ -32,9 +32,14 @@ const TransitionContainer = ({ children, base, enter, update, exit, time, ...pro
     else {
       setIndex(elements.findIndex((child) => !newChildren.find((c) => compareComponents(child, c))));
       if (elements.length !== newChildren.length) setCssClass(exit);
+      // else if (elements.length < newChildren.length) setCssClass(enter);
       else setCssClass(update);
 
-      setTimeout(() => setElements(newChildren), time);
+      setTimeout(() => {
+        setIndex(-1);
+
+        setElements(newChildren);
+      }, time);
     }
   }, [children]);
 
