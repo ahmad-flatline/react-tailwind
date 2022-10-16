@@ -4,9 +4,8 @@ import React, { useEffect, useState } from "react";
 
 const TransitionContainer = ({ children, className, base, enter, update, exit, time, ...props }) => {
   const [elements, setElements] = useState(null);
-  const [activeClass, setActiveClass] = useState("");
-  const [index, setIndex] = useState(-1);
-  // const [animating, setAnimating] = useState(true);
+  const [shallowElements, setShallowElements] = useState(null);
+  const [activeElement, setActiveElement] = useState({ index: -1, class: "" });
 
   const prepareChildren = (children) => {
     let newChildren = children;
@@ -16,6 +15,8 @@ const TransitionContainer = ({ children, className, base, enter, update, exit, t
 
     return newChildren.filter((child) => child);
   };
+
+  const getClasses = (class1 = "", class2 = "") => ({ className: `${class1} ${base} ${class2}` });
 
   const compareComponents = (component1, component2) => {
     if (component1 === component2) return true;
@@ -33,20 +34,24 @@ const TransitionContainer = ({ children, className, base, enter, update, exit, t
     if (!elements) setElements(newChildren);
     else {
       if (elements.length < newChildren.length) {
-        setActiveClass(enter);
-        setIndex(elements.length);
+        setActiveElement({ index: elements.length, class: enter });
         setElements(newChildren);
-        setTimeout(() => setIndex(-1) + setActiveClass(""), 50);
+        setTimeout(() => setActiveElement({ index: -1, class: "" }), 20);
       } else {
-        if (elements.length > newChildren.length) setActiveClass(exit);
-        else setActiveClass(update);
+        const index = elements.findIndex((child) => !newChildren.find((c) => compareComponents(child, c)));
 
-        setIndex(elements.findIndex((child) => !newChildren.find((c) => compareComponents(child, c))));
+        if (elements.length > newChildren.length) setActiveElement({ index, class: exit });
+        else setActiveElement({ index, class: update });
 
         setTimeout(() => {
-          setActiveClass("");
-          setIndex(-1);
-          setElements(newChildren);
+          setActiveElement({ index: -1, class: "" });
+          setShallowElements(
+            React.Children.map(newChildren, (ch, i) => React.cloneElement(ch, getClasses(ch.props.className)))
+          );
+          setTimeout(() => {
+            setElements(newChildren);
+            setShallowElements(null);
+          }, 20);
         }, time);
       }
     }
@@ -54,11 +59,15 @@ const TransitionContainer = ({ children, className, base, enter, update, exit, t
 
   return (
     <props.tag className={className}>
-      {React.Children.map(elements, (ch, i) =>
-        React.cloneElement(ch, {
-          className: `${ch.props.className || ""} ${base} ${i === index ? activeClass : ""}`,
-        })
-      )}
+      {!shallowElements &&
+        React.Children.map(elements, (ch, i) =>
+          React.cloneElement(
+            ch,
+            getClasses(ch.props.className, i === activeElement.index ? activeElement.class : "")
+          )
+        )}
+
+      {shallowElements || null}
     </props.tag>
   );
 };

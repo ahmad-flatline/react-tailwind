@@ -33,7 +33,7 @@ function TodoList() {
         className=""
         base="mt-3 p-2 bg-slate-900 text-white rounded-md transition duration-500 ease-in-out"
         enter="translate-y-12 rotate-12 opacity-0"
-        update=""
+        update="opacity-0"
         exit="translate-y-12 rotate-12 opacity-0"
         time={500}
       >
