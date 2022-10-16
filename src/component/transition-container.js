@@ -4,8 +4,9 @@ import React, { useEffect, useState } from "react";
 
 const TransitionContainer = ({ children, className, base, enter, update, exit, time, ...props }) => {
   const [elements, setElements] = useState(null);
-  const [currentClass, setCurrentClass] = useState("");
+  const [activeClass, setActiveClass] = useState("");
   const [index, setIndex] = useState(-1);
+  // const [animating, setAnimating] = useState(true);
 
   const prepareChildren = (children) => {
     let newChildren = children;
@@ -32,22 +33,19 @@ const TransitionContainer = ({ children, className, base, enter, update, exit, t
     if (!elements) setElements(newChildren);
     else {
       if (elements.length < newChildren.length) {
-        setCurrentClass(enter);
+        setActiveClass(enter);
         setIndex(elements.length);
         setElements(newChildren);
-        setTimeout(() => setIndex(-1) + setCurrentClass(""), 50);
+        setTimeout(() => setIndex(-1) + setActiveClass(""), 50);
       } else {
-        if (elements.length > newChildren.length) setCurrentClass(exit);
-        else setCurrentClass(update);
+        if (elements.length > newChildren.length) setActiveClass(exit);
+        else setActiveClass(update);
 
         setIndex(elements.findIndex((child) => !newChildren.find((c) => compareComponents(child, c))));
 
-        // setTimeout(() => setCurrentClass(""), time - 50);
-
         setTimeout(() => {
-          setCurrentClass("");
+          setActiveClass("");
           setIndex(-1);
-          console.log("Done");
           setElements(newChildren);
         }, time);
       }
@@ -58,7 +56,7 @@ const TransitionContainer = ({ children, className, base, enter, update, exit, t
     <props.tag className={className}>
       {React.Children.map(elements, (ch, i) =>
         React.cloneElement(ch, {
-          className: `${ch.props.className || ""} ${base} ${i === index ? currentClass : ""}`,
+          className: `${ch.props.className || ""} ${base} ${i === index ? activeClass : ""}`,
         })
       )}
     </props.tag>
